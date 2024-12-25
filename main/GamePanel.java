@@ -12,7 +12,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     int FPS = 60;
 
-    public final int tileSize = originalTileSize * scale;
+    final int tileSize = originalTileSize * scale;
 
     final int maxScreenCol = 16;
     final int maxScreenRow = 12;
@@ -52,10 +52,25 @@ public class GamePanel extends JPanel implements Runnable {
 
             repaint();
 
+
+
+            try {
+                double remaingingTime = nextDrawTime - System.nanoTime();
+                remaingingTime = remaingingTime/1000000;
+
+                if(remaingingTime < 0){
+                    remaingingTime = 0;
+                }
+                Thread.sleep((long)remaingingTime);
+
+                nextDrawTime += drawInterval;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     public void update() {
-        player.update();
+
     }
     public void paintComponent(Graphics g) {
 
@@ -63,7 +78,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D)g;
 
-        player.draw(g2);
+
+
 
         g2.dispose();
     }
