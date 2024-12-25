@@ -21,7 +21,7 @@ public class Player extends Entity{
     }
     public void update() {
         if(keyH.upPressed == true) {
-            p
+
         }
     }
     public void draw() {
