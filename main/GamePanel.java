@@ -2,6 +2,7 @@ package main;
 
 
 
+import Inventory.Invent;
 import entity.Player;
 import tile.TileManager;
 
@@ -23,6 +24,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxScreenRow = 12;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
+    Invent invent = new Invent();
+    InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
     TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
@@ -37,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
     }
+
 
     public void startGameThread () {
         gameThread = new Thread(this);
@@ -68,8 +72,11 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+
     public void update() {
         player.update();
+
+
     }
     public void paintComponent(Graphics g) {
 
@@ -82,4 +89,10 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2.dispose();
     }
+    public void openInventory() {
+        InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
+        inventoryGUI.setVisible(true);
+        keyH.setInventoryOpen(true);
+    }
+    public void closeInventory() { keyH.setInventoryOpen(false); }
 }

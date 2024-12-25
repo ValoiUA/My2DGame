@@ -1,6 +1,8 @@
 package entity;
 
+import Inventory.Invent;
 import main.GamePanel;
+import main.InventoryGUI;
 import main.KeyHandler;
 
 import javax.imageio.ImageIO;
@@ -12,6 +14,8 @@ public class Player extends Entity{
 
     GamePanel gp;
     KeyHandler keyH;
+    Invent invent;
+    InventoryGUI inventoryGUI;
     public final int screenX;
     public final int screenY;
     public Player(GamePanel gp, KeyHandler keyH) {
@@ -48,6 +52,12 @@ public class Player extends Entity{
 
 
     public void update() {
+        if(keyH.inventoryopen){
+            keyH.downPressed = false;
+            keyH.upPressed = false;
+            keyH.leftPressed = false;
+            keyH.rightPressed = false;
+        }
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
             if (keyH.upPressed == true){
                 direction = "up";
@@ -62,6 +72,7 @@ public class Player extends Entity{
                 direction = "right";
                 worldx += speed;
             }
+
             spriteCounter++;
             if (spriteCounter > 12){
                 if(spriteNum == 1){
@@ -72,6 +83,10 @@ public class Player extends Entity{
                 }
                 spriteCounter = 0;
             }
+        }
+        if (keyH.inventoryopen) {
+            gp.openInventory();
+            keyH.inventoryopen = false;
         }
 
     }
