@@ -52,18 +52,25 @@ public class GamePanel extends JPanel implements Runnable {
 
             repaint();
 
+
+
+            try {
+                double remaingingTime = nextDrawTime - System.nanoTime();
+                remaingingTime = remaingingTime/1000000;
+
+                if(remaingingTime < 0){
+                    remaingingTime = 0;
+                }
+                Thread.sleep((long)remaingingTime);
+
+                nextDrawTime += drawInterval;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     public void update() {
-        if (keyH.upPressed == true){
-            playerY -= playerSpeed;
-        }else if (keyH.downPressed == true){
-            playerY += playerSpeed;
-        }else if (keyH.leftPressed == true){
-            playerX -= playerSpeed;
-        }else if (keyH.rightPressed == true){
-            playerX += playerSpeed;
-        }
+
     }
     public void paintComponent(Graphics g) {
 
@@ -71,12 +78,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D)g;
 
-        g2.setColor(Color.white);
 
-
-        g2.fillRect(playerX, playerY, tileSize, tileSize);
-
-        g2.fillRect(player.x, player.y, tileSize, tileSize);
 
 
         g2.dispose();
