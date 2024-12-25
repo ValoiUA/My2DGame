@@ -1,5 +1,7 @@
 package main;
 
+import entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -16,7 +18,7 @@ public class GamePanel extends JPanel implements Runnable {
     final int screenHeight = tileSize * maxScreenRow;
 
     Thread gameThread;
-
+    Player player = new Player(this, keyH);
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -51,7 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2.setColor(Color.white);
 
-        g2.fillRect(100, 100, tileSize, tileSize);
+        g2.fillRect(player.x, player.y, tileSize, tileSize);
 
         g2.dispose();
     }
