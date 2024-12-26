@@ -5,6 +5,7 @@ package main;
 import Inventory.Invent;
 import entity.Player;
 import maps.AssetSetter;
+import object.Stick;
 import object.SuperObject;
 import tile.TileManager;
 
@@ -34,7 +35,7 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     public Player player = new Player(this,keyH);
-    public SuperObject obj[] = new SuperObject[10];
+    public SuperObject obj[] = new SuperObject[100];
 
 
     public GamePanel(){
@@ -100,7 +101,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         player.draw(g2);
 
-        g2.dispose();
+         g2.dispose();
     }
     public void openInventory() {
         InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
