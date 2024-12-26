@@ -1,5 +1,6 @@
 package entity;
 
+import main.CollisionChecker;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -21,6 +22,14 @@ public class Player extends Entity{
 
         screenX = gp.screenWidth/2 - (gp.tileSize / 2);
         screenY = gp.screenHeight/2 - (gp.tileSize / 2);
+
+        solidArea = new Rectangle();
+
+        solidArea.x = 8;
+        solidArea.y = 16;
+        solidArea.width = 32;
+        solidArea.height = 32;
+
         setDefaultValues();
         getPlayerImage();
     }
@@ -51,17 +60,26 @@ public class Player extends Entity{
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
             if (keyH.upPressed == true){
                 direction = "up";
-                worldy -= speed;
             }else if (keyH.downPressed == true){
                 direction = "down";
-                worldy += speed;
             }else if (keyH.leftPressed == true){
                 direction = "left";
-                worldx -= speed;
             }else if (keyH.rightPressed == true){
                 direction = "right";
-                worldx += speed;
             }
+
+            collisionOn = false;
+            gp.cChecker.checkTile(this);
+
+            if(collisionOn == false) {
+                switch (direction) {
+                    case "up": worldy -= speed; break;
+                    case "down": worldy += speed; break;
+                    case "left": worldx -= speed; break;
+                    case "right": worldx += speed; break;
+                }
+            }
+
             spriteCounter++;
             if (spriteCounter > 12){
                 if(spriteNum == 1){
