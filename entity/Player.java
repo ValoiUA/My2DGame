@@ -1,7 +1,8 @@
 package entity;
 
-import main.CollisionChecker;
+import Inventory.Invent;
 import main.GamePanel;
+import main.InventoryGUI;
 import main.KeyHandler;
 
 import javax.imageio.ImageIO;
@@ -13,6 +14,8 @@ public class Player extends Entity{
 
     GamePanel gp;
     KeyHandler keyH;
+    Invent invent;
+    InventoryGUI inventoryGUI;
     public final int screenX;
     public final int screenY;
     public Player(GamePanel gp, KeyHandler keyH) {
@@ -24,7 +27,6 @@ public class Player extends Entity{
         screenY = gp.screenHeight/2 - (gp.tileSize / 2);
 
         solidArea = new Rectangle();
-
         solidArea.x = 8;
         solidArea.y = 16;
         solidArea.width = 32;
@@ -42,41 +44,49 @@ public class Player extends Entity{
     }
     public void getPlayerImage(){
         try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/res/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/res/boy_up_2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/res/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/res/boy_down_2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/res/boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/res/boy_left_2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/res/boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/res/boy_right_2.png"));
+            up1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_up_1.png"));
+            up2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_up_2.png"));
+            down1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_down_1.png"));
+            down2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_down_2.png"));
+            left1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_left_1.png"));
+            left2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_left_2.png"));
+            right1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_right_1.png"));
+            right2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_right_2.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
     }
-
-
     public void update() {
+        if(keyH.inventoryopen){
+            keyH.downPressed = false;
+            keyH.upPressed = false;
+            keyH.leftPressed = false;
+            keyH.rightPressed = false;
+        }
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
             if (keyH.upPressed == true){
                 direction = "up";
+
             }else if (keyH.downPressed == true){
                 direction = "down";
+
             }else if (keyH.leftPressed == true){
                 direction = "left";
+
             }else if (keyH.rightPressed == true){
                 direction = "right";
+
             }
 
             collisionOn = false;
             gp.cChecker.checkTile(this);
 
-            if(collisionOn == false) {
-                switch (direction) {
+            if (collisionOn == false){
+                switch (direction){
                     case "up": worldy -= speed; break;
                     case "down": worldy += speed; break;
-                    case "left": worldx -= speed; break;
                     case "right": worldx += speed; break;
+                    case "left": worldx -= speed; break;
                 }
             }
 
@@ -90,6 +100,10 @@ public class Player extends Entity{
                 }
                 spriteCounter = 0;
             }
+        }
+        if (keyH.inventoryopen) {
+            gp.openInventory();
+            keyH.inventoryopen = false;
         }
 
     }

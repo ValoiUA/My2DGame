@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 public class TileManager {
     GamePanel gp;
     public  tile[] tile;
-    public int mapTileNum [] [];
+    public int mapTileNum [][];
 
     public TileManager(GamePanel gp){
         this.gp = gp;
@@ -26,25 +26,25 @@ public class TileManager {
     public void getTileImage(){
         try {
             tile[0] = new tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/entitis/grass.png"));
+            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/images/entitis/grass.png"));
 
             tile[1] = new tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/entitis/wall.png"));
+            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/images/entitis/wall.png"));
             tile[1].collision = true;
 
             tile[2] = new tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/entitis/water.png"));
+            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/images/entitis/water.png"));
             tile[2].collision = true;
 
             tile[3] = new tile();
-            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/entitis/earth.png"));
+            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/images/entitis/earth.png"));
 
             tile[4] = new tile();
-            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/entitis/tree.png"));
+            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/images/entitis/tree.png"));
             tile[4].collision = true;
 
             tile[5] = new tile();
-            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/entitis/sand.png"));
+            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/images/entitis/sand.png"));
 
         }catch (IOException e){
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class TileManager {
                 }
 
             }
-        br.close();
+            br.close();
         }catch (Exception e){
 
         }

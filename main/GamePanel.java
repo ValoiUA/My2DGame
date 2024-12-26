@@ -2,7 +2,11 @@ package main;
 
 
 
+import Inventory.Invent;
 import entity.Player;
+import maps.AssetSetter;
+import object.Stick;
+import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -24,14 +28,17 @@ public class GamePanel extends JPanel implements Runnable {
 
     int FPS = 60;
 
+    Invent invent = new Invent();
+    InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
     TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
-    Thread gameThread;
+    Sound sound = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
-
+    public AssetSetter aSetter = new AssetSetter(this);
+    Thread gameThread;
     public Player player = new Player(this,keyH);
-    public final int worldWith = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
+    public SuperObject obj[] = new SuperObject[100];
+
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -39,6 +46,11 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+    }
+    public void setupGame(){
+        aSetter.setObject();
+
+        playMusic(0);
     }
 
     public void startGameThread () {
@@ -71,8 +83,11 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+
     public void update() {
         player.update();
+
+
     }
     public void paintComponent(Graphics g) {
 
@@ -81,8 +96,36 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D)g;
 
         tileM.draw(g2);
+
+        for (int i = 0; i < obj.length; i++) {
+            if (obj[i] != null){
+                obj[i].draw(g2, this);
+            }
+        }
+
         player.draw(g2);
 
-        g2.dispose();
+         g2.dispose();
+    }
+    public void openInventory() {
+        InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
+        inventoryGUI.setVisible(true);
+        keyH.setInventoryOpen(true);
+    }
+    public void closeInventory() { keyH.setInventoryOpen(false); }
+
+
+    public void playMusic(int i) {
+        sound.setFile(i);
+        sound. play();
+        sound.loop();
+    }
+    public void stopMusic(){
+        sound.stop();
+
+    }
+    public void playSE(int i) {
+        sound.setFile(i);
+        sound.play();
     }
 }
