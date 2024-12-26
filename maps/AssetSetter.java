@@ -1,5 +1,6 @@
 package maps;
 
+import entity.NPC_OldMan;
 import main.GamePanel;
 import object.OBJ_Boots;
 import object.OBJ_Key;
@@ -37,5 +38,11 @@ public class AssetSetter {
             gp.obj[i].worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
             gp.obj[i].worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
         }
+    }
+    public void setNPC(){
+
+        gp.npc[0] = new NPC_OldMan(gp);
+        gp.npc[0].worldx = gp.tileSize*21;
+        gp.npc[0].worldy = gp.tileSize*21;
     }
 }

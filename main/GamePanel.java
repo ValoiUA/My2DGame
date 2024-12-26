@@ -3,6 +3,7 @@ package main;
 
 
 import Inventory.Invent;
+import entity.Entity;
 import entity.Player;
 import maps.AssetSetter;
 import object.Stick;
@@ -36,24 +37,25 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     Thread gameThread;
-    public Player player = new Player(this,keyH);
+    public Player player = new Player(this, keyH);
     public SuperObject obj[] = new SuperObject[100];
+    public Entity npc[] = new Entity[10];
 
-
-    public GamePanel(){
+    public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
     }
-    public void setupGame(){
-        aSetter.setObject();
 
+    public void setupGame() {
+        aSetter.setObject();
+        aSetter.setNPC();
         playMusic(0);
     }
 
-    public void startGameThread () {
+    public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -70,12 +72,12 @@ public class GamePanel extends JPanel implements Runnable {
             repaint();
             try {
                 double remaingingTime = nextDrawTime - System.nanoTime();
-                remaingingTime = remaingingTime/1000000;
+                remaingingTime = remaingingTime / 1000000;
 
-                if(remaingingTime < 0){
+                if (remaingingTime < 0) {
                     remaingingTime = 0;
                 }
-                Thread.sleep((long)remaingingTime);
+                Thread.sleep((long) remaingingTime);
 
                 nextDrawTime += drawInterval;
             } catch (InterruptedException e) {
@@ -89,41 +91,55 @@ public class GamePanel extends JPanel implements Runnable {
 
 
     }
+
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
 
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
 
         tileM.draw(g2);
 
         for (int i = 0; i < obj.length; i++) {
-            if (obj[i] != null){
+            if (obj[i] != null) {
                 obj[i].draw(g2, this);
+            }
+        }
+
+        for(int i = 0; i < npc.length; i++){
+            if(npc[i] != null){
+                npc[i].draw(g2);
             }
         }
 
         player.draw(g2);
 
-         g2.dispose();
+        g2.dispose();
     }
+
     public void openInventory() {
         InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
         inventoryGUI.setVisible(true);
         keyH.setInventoryOpen(true);
     }
-    public void closeInventory() { keyH.setInventoryOpen(false); }
+
+    public void closeInventory() {
+        keyH.setInventoryOpen(false);
+    }
 
 
     public void playMusic(int i) {
         sound.setFile(i);
-        sound. play();
+        sound.play();
+        sound.play();
         sound.loop();
     }
-    public void stopMusic(){
+
+    public void stopMusic() {
         sound.stop();
 
     }
+
     public void playSE(int i) {
         sound.setFile(i);
         sound.play();

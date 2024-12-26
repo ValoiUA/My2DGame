@@ -12,15 +12,17 @@ import java.io.IOException;
 
 public class Player extends Entity{
 
-    GamePanel gp;
     KeyHandler keyH;
     Invent invent;
     InventoryGUI inventoryGUI;
     public final int screenX;
     public final int screenY;
+
+
     public Player(GamePanel gp, KeyHandler keyH) {
 
-        this.gp = gp;
+        super(gp);
+
         this.keyH = keyH;
 
         screenX = gp.screenWidth/2 - (gp.tileSize / 2);
@@ -29,6 +31,8 @@ public class Player extends Entity{
         solidArea = new Rectangle();
         solidArea.x = 8;
         solidArea.y = 16;
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
         solidArea.width = 32;
         solidArea.height = 32;
 
