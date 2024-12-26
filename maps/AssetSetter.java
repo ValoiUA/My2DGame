@@ -1,5 +1,6 @@
 package maps;
 
+import entity.NPC_OldMan;
 import main.GamePanel;
 import object.OBJ_Boots;
 import object.OBJ_Key;
@@ -32,6 +33,8 @@ public class AssetSetter {
         gp.obj[2] = new OBJ_Boots();
         gp.obj[2].worldX = 37 * gp.tileSize;
         gp.obj[2].worldY = 42 * gp.tileSize;
+
+
 
         for (int i = 3; i < 20; i++) {
             boolean isCollision;
@@ -87,5 +90,11 @@ public class AssetSetter {
                 obj1Left < obj2Right &&
                 obj1Bottom > obj2Top &&
                 obj1Top < obj2Bottom;
+    }
+    public void setNPC(){
+
+        gp.npc[0] = new NPC_OldMan(gp);
+        gp.npc[0].worldx = gp.tileSize*21;
+        gp.npc[0].worldy = gp.tileSize*21;
     }
 }
