@@ -1,11 +1,8 @@
 package main;
 
-
-
 import Inventory.Invent;
 import entity.Player;
 import maps.AssetSetter;
-import object.Stick;
 import object.SuperObject;
 import tile.TileManager;
 
@@ -36,11 +33,10 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     Thread gameThread;
-    public Player player = new Player(this,keyH);
+    public Player player = new Player(this, keyH);
     public SuperObject obj[] = new SuperObject[100];
 
-
-    public GamePanel(){
+    public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
@@ -51,6 +47,7 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setObject();
 
         playMusic(0);
+
     }
 
     public void startGameThread () {
@@ -86,6 +83,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
+
 
 
     }

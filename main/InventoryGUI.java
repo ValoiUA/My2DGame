@@ -5,6 +5,7 @@ import Inventory.Invent;
 import Inventory.Item;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,8 +28,9 @@ public class InventoryGUI extends JFrame {
         this.recipes = new ArrayList<>();
 
         setTitle("Inventory & Crafting");
-        setSize(600, 400);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -59,11 +61,14 @@ public class InventoryGUI extends JFrame {
         // Ініціалізація деталей рецепту
         recipeDetails = new JTextArea();
         recipeDetails.setEditable(false);
+        recipeDetails.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        recipeDetails.setFont(new Font("Serif", Font.PLAIN, 14));
         JScrollPane recipeDetailsScrollPane = new JScrollPane(recipeDetails);
         recipeDetailsScrollPane.setBorder(BorderFactory.createTitledBorder("Recipe Details"));
 
         // Додавання кнопок
         JButton addItemButton = new JButton("Add Item");
+        styleButton(addItemButton);
         addItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -72,6 +77,7 @@ public class InventoryGUI extends JFrame {
         });
 
         JButton craftItemButton = new JButton("Craft Item");
+        styleButton(craftItemButton);
         craftItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -84,7 +90,7 @@ public class InventoryGUI extends JFrame {
         buttonPanel.add(craftItemButton);
 
         // Розташування панелей
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
         add(inventoryScrollPane, BorderLayout.WEST);
         add(recipeDetailsScrollPane, BorderLayout.CENTER);
         add(recipeScrollPane, BorderLayout.EAST);
@@ -97,11 +103,21 @@ public class InventoryGUI extends JFrame {
         updateRecipeList();
     }
 
+    private void styleButton(JButton button) {
+        button.setFocusPainted(false);
+        button.setBackground(new Color(100, 149, 237));
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setBorder(new EmptyBorder(5, 15, 5, 15));
+    }
+
     private void addItem() {
         String name = JOptionPane.showInputDialog(this, "Enter item name:");
-        Item item = new Item(name, 1);
-        inventory.addItem(item);
-        updateInventoryList();
+        if (name != null && !name.trim().isEmpty()) {
+            Item item = new Item(name, 1);
+            inventory.addItem(item);
+            updateInventoryList();
+        }
     }
 
     private void craftItem() {
@@ -119,7 +135,6 @@ public class InventoryGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "No valid crafting recipes found.");
         }
     }
-
 
     private void addRecipes() {
         // Додавання рецепту крафту для створення верстаку з двох дерев
