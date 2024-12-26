@@ -10,11 +10,11 @@ public class Sound {
     URL soundURL[] = new URL[30];
 
     public Sound() {
-        soundURL[0] = getClass().getResource("/sound/BlueBoyAdventure.wav");
-        soundURL[1] = getClass().getResource("/sound/coin.wav");
-        soundURL[3] = getClass().getResource("/sound/powerup.wav");
-        soundURL[4] = getClass().getResource("/sound/unlock.wav");
-        soundURL[5] = getClass().getResource("/sound/fanfare.wav");
+        soundURL[0] = getClass().getResource("/images/sounds/BlueBoyAdventure.wav");
+        soundURL[1] = getClass().getResource("/images/sounds/coin.wav");
+        soundURL[2] = getClass().getResource("/images/sounds/powerup.wav");
+        soundURL[3] = getClass().getResource("/images/sounds/unlock.wav");
+        soundURL[4] = getClass().getResource("/images/sounds/fanfare.wav");
     }
     public void setFile(int i){
         try {

@@ -13,10 +13,12 @@ public class CraftingRecipe {
     }
 
     public List<Item> getRequiredItems() {
+
         return requiredItems;
     }
 
     public Item getResult() {
+
         return result;
     }
 
@@ -24,9 +26,11 @@ public class CraftingRecipe {
         List<Item> inventoryItems = new ArrayList<>(inventory.getItems());
         for (Item item : requiredItems) {
             if (!inventoryItems.remove(item)) {
+                System.out.println("cant");
                 return false;
             }
         }
+        System.out.println("can");
         return true;
     }
 

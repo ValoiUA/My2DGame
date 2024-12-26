@@ -99,7 +99,7 @@ public class InventoryGUI extends JFrame {
 
     private void addItem() {
         String name = JOptionPane.showInputDialog(this, "Enter item name:");
-        Item item = new Item(name);
+        Item item = new Item(name, 1);
         inventory.addItem(item);
         updateInventoryList();
     }
@@ -124,9 +124,9 @@ public class InventoryGUI extends JFrame {
     private void addRecipes() {
         // Додавання рецепту крафту для створення верстаку з двох дерев
         List<Item> recipeWorkbench = new ArrayList<>();
-        recipeWorkbench.add(new Item("Wood"));
-        recipeWorkbench.add(new Item("Wood"));
-        recipes.add(new CraftingRecipe(recipeWorkbench, new Item("Workbench")));
+        recipeWorkbench.add(new Item("Wood", 1));
+        recipeWorkbench.add(new Item("Wood", 1));
+        recipes.add(new CraftingRecipe(recipeWorkbench, new Item("Workbench", 1)));
     }
 
     private void updateInventoryList() {
