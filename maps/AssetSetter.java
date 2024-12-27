@@ -5,6 +5,7 @@ import main.GamePanel;
 import object.OBJ_Boots;
 import object.OBJ_Key;
 import object.Stick;
+import object.Stone;
 import object.SuperObject;
 
 import java.util.ArrayList;
@@ -34,8 +35,10 @@ public class AssetSetter {
         gp.obj[2].worldX = 37 * gp.tileSize;
         gp.obj[2].worldY = 42 * gp.tileSize;
 
-        int maxObjects = 30; // Максимальна кількість палок, яку ви хочете додати
+        int maxObjects = 30;
         int addedObjects = 0;
+        int maxstone = 30;
+        int addedstone = 0;
 
         while (addedObjects < maxObjects) {
             boolean isCollision;
@@ -67,6 +70,40 @@ public class AssetSetter {
                 wx.add(stick.worldX);
                 wy.add(stick.worldY);
                 addedObjects++;
+            }
+        }
+
+
+        while (addedstone < maxstone) {
+            boolean isCollision;
+            int attempts = 0;
+            SuperObject stone = null;
+
+            do {
+                isCollision = false;
+                stone = new Stone();
+                stone.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
+                stone.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
+
+                gp.cChecker.checkObject(stone);
+
+                if (stone.collision) {
+                    isCollision = true;
+                }
+
+                attempts++;
+                if (attempts > 100) {
+                    System.out.println("Unable to place object without collision");
+                    break;
+                }
+
+            } while (isCollision);
+
+            if (!isCollision) {
+                gp.obj[4 + addedObjects + addedstone] = stone;
+                wx.add(stone.worldX);
+                wy.add(stone.worldY);
+                addedstone++;
             }
         }
     }

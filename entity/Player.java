@@ -7,6 +7,7 @@ import main.InventoryGUI;
 import main.KeyHandler;
 import maps.AssetSetter;
 import object.Stick;
+import object.Stone;
 import object.SuperObject;
 
 import javax.imageio.ImageIO;
@@ -118,6 +119,22 @@ public class Player extends Entity {
                     showPickupMessage = true;
                     if (keyH.presse) {
                         invent.addItem(new Item("Stick", 1));
+                        relocateStick(obj);
+                        keyH.presse = false;
+                        showPickupMessage = false;
+                        break;
+                    }
+                }
+            }
+        }
+        showPickupMessage = false;
+        for (SuperObject obj : gp.obj) {
+            if (obj instanceof Stone) {
+                if (Math.abs(obj.worldX - worldx) < tolerance &&
+                        Math.abs(obj.worldY - worldy) < tolerance) {
+                    showPickupMessage = true;
+                    if (keyH.presse) {
+                        invent.addItem(new Item("Stone", 1));
                         relocateStick(obj);
                         keyH.presse = false;
                         showPickupMessage = false;

@@ -20,7 +20,7 @@ public class TileManager {
         tile = new tile[10];
         mapTileNum = new int[gp.maxWorldCol] [gp.maxWorldRow];
         getTileImage();
-        loadMap("/maps/map01");
+        loadMap("/maps/chek");
     }
 
     public void getTileImage(){
