@@ -6,11 +6,14 @@ import main.GamePanel;
 import main.InventoryGUI;
 import main.KeyHandler;
 import maps.AssetSetter;
+import object.Stick;
+import object.SuperObject;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 public class Player extends Entity {
 
@@ -108,19 +111,47 @@ public class Player extends Entity {
         int tolerance = gp.tileSize * 2; // Допуск для перевірки колізії
 
         showPickupMessage = false;
-        for (int i = 0; i < AssetSetter.getWorldx().size(); i++) {
-            if (Math.abs(AssetSetter.getWorldx().get(i) - worldx) < tolerance &&
-                    Math.abs(AssetSetter.getWorldy().get(i) - worldy) < tolerance) {
-                showPickupMessage = true;
-                break;
+        for (SuperObject obj : gp.obj) {
+            if (obj instanceof Stick) {
+                if (Math.abs(obj.worldX - worldx) < tolerance &&
+                        Math.abs(obj.worldY - worldy) < tolerance) {
+                    showPickupMessage = true;
+                    if (keyH.presse) {
+                        invent.addItem(new Item("Stick", 1));
+                        relocateStick(obj);
+                        keyH.presse = false;
+                        showPickupMessage = false;
+                        break;
+                    }
+                }
             }
         }
+    }
 
-        if (showPickupMessage && keyH.presse) {
-            // Логіка підбору об'єкта
-            invent.addItem(new Item("Stick", 1));
-            keyH.presse = false;
-        }
+    private void relocateStick(SuperObject stick) {
+        Random random = new Random();
+        boolean isCollision;
+        int attempts = 0;
+
+        do {
+            isCollision = false;
+            stick.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
+            stick.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
+
+            gp.cChecker.checkObject(stick);
+
+            if (!stick.collision) {
+                stick.collision = false;
+                break;
+            }
+
+            attempts++;
+            if (attempts > 100) {
+                System.out.println("Unable to relocate stick without collision");
+                break;
+            }
+
+        } while (isCollision);
     }
 
     public void draw(Graphics g2) {

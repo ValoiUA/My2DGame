@@ -172,6 +172,17 @@ public class InventoryGUI extends JFrame {
         List<Item> recipeSword = new ArrayList<>();
         recipeSword.add(new Item("Stick", 3)); // три палки
         recipes.add(new CraftingRecipe(recipeSword, new Item("Sword", 1)));
+
+        List<Item> recipeAxe = new ArrayList<>();
+        recipeAxe.add(new Item("Stick", 2));
+        recipeAxe.add(new Item("Stone", 1));
+        recipes.add(new CraftingRecipe(recipeAxe, new Item("Axe", 1)));
+
+        List<Item> recipeKir = new ArrayList<>();
+        recipeKir.add(new Item("Stick", 2));
+        recipeKir.add(new Item("Stone", 2));
+        recipes.add(new CraftingRecipe(recipeKir, new Item("Kir", 1)));
+
     }
 
     private void updateInventoryList() {
