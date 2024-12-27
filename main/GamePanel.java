@@ -1,12 +1,9 @@
 package main;
 
-
-
 import Inventory.Invent;
 import entity.Entity;
 import entity.Player;
 import maps.AssetSetter;
-import object.Stick;
 import object.SuperObject;
 import tile.TileManager;
 
@@ -14,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
-    // ggg
     final int originalTileSize = 16;
     final int scale = 3;
     public final int maxWorldCol = 50;
@@ -24,13 +20,16 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxScreenRow = 12;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
-    int FPS = 60; Invent invent = new Invent();
+    int FPS = 60;
+    public Invent invent = new Invent();
     InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
     TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler(); Sound sound = new Sound();
+    KeyHandler keyH = new KeyHandler();
+    Sound sound = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
-    Thread gameThread; public Player player = new Player(this, keyH);
+    Thread gameThread;
+    public Player player = new Player(this, keyH);
     public SuperObject obj[] = new SuperObject[100];
     public Entity npc[] = new Entity[10];
 
@@ -58,19 +57,16 @@ public class GamePanel extends JPanel implements Runnable {
         double drawInterval = 1000000000 / FPS;
         double nextDrawTime = System.nanoTime() + drawInterval;
         while (gameThread != null) {
-
-
             update();
-
             repaint();
             try {
-                double remaingingTime = nextDrawTime - System.nanoTime();
-                remaingingTime = remaingingTime / 1000000;
+                double remainingTime = nextDrawTime - System.nanoTime();
+                remainingTime = remainingTime / 1000000;
 
-                if (remaingingTime < 0) {
-                    remaingingTime = 0;
+                if (remainingTime < 0) {
+                    remainingTime = 0;
                 }
-                Thread.sleep((long) remaingingTime);
+                Thread.sleep((long) remainingTime);
 
                 nextDrawTime += drawInterval;
             } catch (InterruptedException e) {
@@ -81,12 +77,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         player.update();
-
-
+        for (int i = 0; i < npc.length; i++) {
+            if (npc[i] != null) {
+                npc[i].update();
+            }
+        }
     }
 
     public void paintComponent(Graphics g) {
-
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
@@ -99,13 +97,20 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
 
-        for(int i = 0; i < npc.length; i++){
-            if(npc[i] != null){
+        for (int i = 0; i < npc.length; i++) {
+            if (npc[i] != null) {
                 npc[i].draw(g2);
             }
         }
 
         player.draw(g2);
+
+        // Відображення повідомлення "Press E to pick up"
+        if (player.showPickupMessage) {
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("Arial", Font.BOLD, 24));
+            g2.drawString("Press E to pick up", player.screenX - 50, player.screenY - 20);
+        }
 
         g2.dispose();
     }
@@ -120,17 +125,14 @@ public class GamePanel extends JPanel implements Runnable {
         keyH.setInventoryOpen(false);
     }
 
-
     public void playMusic(int i) {
         sound.setFile(i);
-        sound.play();
         sound.play();
         sound.loop();
     }
 
     public void stopMusic() {
         sound.stop();
-
     }
 
     public void playSE(int i) {

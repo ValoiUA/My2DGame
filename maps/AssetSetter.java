@@ -36,7 +36,7 @@ public class AssetSetter {
 
 
 
-        for (int i = 3; i < 20; i++) {
+        for (int i = 3; i < 30; i++) {
             boolean isCollision;
             int attempts = 0;
 

@@ -81,7 +81,7 @@ public class InventoryGUI extends JFrame {
         craftItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                craftItem();
+                craftItem(recipeList.getSelectedValue());
             }
         });
 
@@ -89,11 +89,26 @@ public class InventoryGUI extends JFrame {
         buttonPanel.add(addItemButton);
         buttonPanel.add(craftItemButton);
 
-        // Розташування панелей
+        // Розташування панелей з однаковою шириною
+        JPanel inventoryPanel = new JPanel(new BorderLayout());
+        inventoryPanel.add(inventoryScrollPane, BorderLayout.CENTER);
+        inventoryPanel.setPreferredSize(new Dimension(200, 600));
+
+        JPanel recipePanel = new JPanel(new BorderLayout());
+        recipePanel.add(recipeScrollPane, BorderLayout.CENTER);
+        recipePanel.setPreferredSize(new Dimension(200, 600));
+
+        JPanel detailsPanel = new JPanel(new BorderLayout());
+        detailsPanel.add(recipeDetailsScrollPane, BorderLayout.CENTER);
+        detailsPanel.setPreferredSize(new Dimension(200, 600));
+
+        JPanel centerPanel = new JPanel(new GridLayout(1, 3, 10, 0));
+        centerPanel.add(inventoryPanel);
+        centerPanel.add(recipePanel);
+        centerPanel.add(detailsPanel);
+
         setLayout(new BorderLayout(10, 10));
-        add(inventoryScrollPane, BorderLayout.WEST);
-        add(recipeDetailsScrollPane, BorderLayout.CENTER);
-        add(recipeScrollPane, BorderLayout.EAST);
+        add(centerPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Додавання рецептів
@@ -120,34 +135,49 @@ public class InventoryGUI extends JFrame {
         }
     }
 
-    private void craftItem() {
-        boolean crafted = false;
+    private void craftItem(String recipeName) {
+        CraftingRecipe selectedRecipe = null;
         for (CraftingRecipe recipe : recipes) {
-            if (recipe.canCraft(inventory)) {
-                recipe.craft(inventory);
-                JOptionPane.showMessageDialog(this, "Item crafted: " + recipe.getResult().getName());
-                updateInventoryList();
-                crafted = true;
+            if (recipe.getResult().getName().equals(recipeName)) {
+                selectedRecipe = recipe;
                 break;
             }
         }
-        if (!crafted) {
-            JOptionPane.showMessageDialog(this, "No valid crafting recipes found.");
+
+        if (selectedRecipe != null) {
+            if (selectedRecipe.canCraft(inventory)) {
+                selectedRecipe.craft(inventory);
+                JOptionPane.showMessageDialog(this, "Item crafted: " + selectedRecipe.getResult().getName());
+                updateInventoryList();
+            } else {
+                List<Item> missingItems = selectedRecipe.getMissingItems(inventory);
+                StringBuilder missing = new StringBuilder("You are missing:\n");
+                for (Item item : missingItems) {
+                    missing.append("- ").append(item.getName()).append(" x").append(item.getCount()).append("\n");
+                }
+                JOptionPane.showMessageDialog(this, missing.toString());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a recipe to craft.");
         }
     }
 
     private void addRecipes() {
-        // Додавання рецепту крафту для створення верстаку з двох дерев
+        // Додавання рецепту крафту для створення верстака з двох палок
         List<Item> recipeWorkbench = new ArrayList<>();
-        recipeWorkbench.add(new Item("Wood", 1));
-        recipeWorkbench.add(new Item("Wood", 1));
+        recipeWorkbench.add(new Item("Stick", 2)); // дві палки
         recipes.add(new CraftingRecipe(recipeWorkbench, new Item("Workbench", 1)));
+
+        // Додавання рецепту крафту для створення меча з трьох палок
+        List<Item> recipeSword = new ArrayList<>();
+        recipeSword.add(new Item("Stick", 3)); // три палки
+        recipes.add(new CraftingRecipe(recipeSword, new Item("Sword", 1)));
     }
 
     private void updateInventoryList() {
         inventoryListModel.clear();
         for (Item item : inventory.getItems()) {
-            inventoryListModel.addElement(item.getName());
+            inventoryListModel.addElement(item.toString());
         }
     }
 
@@ -164,7 +194,7 @@ public class InventoryGUI extends JFrame {
                 StringBuilder details = new StringBuilder();
                 details.append("To craft ").append(recipeName).append(", you need:\n");
                 for (Item item : recipe.getRequiredItems()) {
-                    details.append("- ").append(item.getName()).append("\n");
+                    details.append("- ").append(item.getName()).append(" x").append(item.getCount()).append("\n");
                 }
                 recipeDetails.setText(details.toString());
                 return;

@@ -1,6 +1,7 @@
 package entity;
 
 import Inventory.Invent;
+import Inventory.Item;
 import main.GamePanel;
 import main.InventoryGUI;
 import main.KeyHandler;
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class Player extends Entity{
+public class Player extends Entity {
 
     KeyHandler keyH;
     Invent invent;
@@ -19,16 +20,15 @@ public class Player extends Entity{
     public final int screenX;
     public final int screenY;
     private maps.AssetSetter AssetSetter;
-
+    public boolean showPickupMessage = false;
 
     public Player(GamePanel gp, KeyHandler keyH) {
-
         super(gp);
-
         this.keyH = keyH;
+        this.invent = gp.invent;
 
-        screenX = gp.screenWidth/2 - (gp.tileSize / 2);
-        screenY = gp.screenHeight/2 - (gp.tileSize / 2);
+        screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
+        screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
         solidArea = new Rectangle();
         solidArea.x = 8;
@@ -41,14 +41,15 @@ public class Player extends Entity{
         setDefaultValues();
         getPlayerImage();
     }
-    public void setDefaultValues() {
 
+    public void setDefaultValues() {
         worldx = gp.tileSize * 23;
         worldy = gp.tileSize * 21;
-        speed  = 4;
+        speed = 4;
         direction = "down";
     }
-    public void getPlayerImage(){
+
+    public void getPlayerImage() {
         try {
             up1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_up_1.png"));
             up2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_up_2.png"));
@@ -58,37 +59,34 @@ public class Player extends Entity{
             left2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_left_2.png"));
             right1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_right_1.png"));
             right2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_right_2.png"));
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     public void update() {
-        if(keyH.inventoryopen){
+        if (keyH.inventoryopen) {
             keyH.downPressed = false;
             keyH.upPressed = false;
             keyH.leftPressed = false;
             keyH.rightPressed = false;
         }
-        if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
-            if (keyH.upPressed == true){
+        if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+            if (keyH.upPressed) {
                 direction = "up";
-
-            }else if (keyH.downPressed == true){
+            } else if (keyH.downPressed) {
                 direction = "down";
-
-            }else if (keyH.leftPressed == true){
+            } else if (keyH.leftPressed) {
                 direction = "left";
-
-            }else if (keyH.rightPressed == true){
+            } else if (keyH.rightPressed) {
                 direction = "right";
-
             }
 
             collisionOn = false;
             gp.cChecker.checkTile(this);
 
-            if (collisionOn == false){
-                switch (direction){
+            if (!collisionOn) {
+                switch (direction) {
                     case "up": worldy -= speed; break;
                     case "down": worldy += speed; break;
                     case "right": worldx += speed; break;
@@ -97,13 +95,8 @@ public class Player extends Entity{
             }
 
             spriteCounter++;
-            if (spriteCounter > 12){
-                if(spriteNum == 1){
-                    spriteNum = 2;
-                }
-                else if (spriteNum == 2){
-                    spriteNum = 1;
-                }
+            if (spriteCounter > 12) {
+                spriteNum = (spriteNum == 1) ? 2 : 1;
                 spriteCounter = 0;
             }
         }
@@ -111,52 +104,44 @@ public class Player extends Entity{
             gp.openInventory();
             keyH.inventoryopen = false;
         }
-        int tolerance = gp.tileSize / 2;
-        for (int i = 0; i < AssetSetter.getWorldx().size(); i++)
-        {
-            if (Math.abs(AssetSetter.getWorldx().get(i) - worldx) < tolerance &&
-                    Math.abs(AssetSetter.getWorldy().get(i) - worldy) < tolerance)
-            { System.out.println("y");
-                break;
-            } else { System.out.println("n"); }
 
+        int tolerance = gp.tileSize * 2; // Допуск для перевірки колізії
+
+        showPickupMessage = false;
+        for (int i = 0; i < AssetSetter.getWorldx().size(); i++) {
+            if (Math.abs(AssetSetter.getWorldx().get(i) - worldx) < tolerance &&
+                    Math.abs(AssetSetter.getWorldy().get(i) - worldy) < tolerance) {
+                showPickupMessage = true;
+                break;
+            }
         }
 
+        if (showPickupMessage && keyH.presse) {
+            // Логіка підбору об'єкта
+            invent.addItem(new Item("Stick", 1));
+            keyH.presse = false;
+        }
     }
+
     public void draw(Graphics g2) {
         BufferedImage image = null;
 
+        switch (direction) {
+            case "up":
+                image = (spriteNum == 1) ? up1 : up2; break;
+            case "down":
+                image = (spriteNum == 1) ? down1 : down2; break;
+            case "left":
+                image = (spriteNum == 1) ? left1 : left2; break;
+            case "right":
+                image = (spriteNum == 1) ? right1 : right2; break;
+        }
+        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
 
-            switch (direction){
-                case "up":
-                    if(spriteNum == 1){
-                        image = up1;
-                    }
-                    if(spriteNum == 2){
-                        image = up2;
-                    } break;
-                case "down":
-                    if(spriteNum == 1){
-                        image = down1;
-                    }
-                    if(spriteNum == 2){
-                        image = down2;
-                    } break;
-                case "left":
-                    if(spriteNum == 1){
-                        image = left1;
-                    }
-                    if(spriteNum == 2){
-                        image = left2;
-                    } break;
-                case "right":
-                    if(spriteNum == 1){
-                        image = right1;
-                    }
-                    if(spriteNum == 2){
-                        image = right2;
-                    } break;
-            }
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        if (showPickupMessage) {
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("Arial", Font.BOLD, 24));
+            g2.drawString("Press E to pick up", screenX - 50, screenY - 20);
         }
     }
+}
