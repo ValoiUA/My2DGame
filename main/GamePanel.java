@@ -1,7 +1,7 @@
 package main;
 
 
-
+import main.InventoryGUI;
 import Inventory.Invent;
 import entity.Entity;
 import entity.Player;
@@ -19,25 +19,17 @@ public class GamePanel extends JPanel implements Runnable {
     final int scale = 3;
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
-
     public final int tileSize = originalTileSize * scale;
-
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 12;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
-
-    int FPS = 60;
-
-    Invent invent = new Invent();
-    InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
+    int FPS = 60; Invent invent = new Invent();
     TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
-    Sound sound = new Sound();
+    KeyHandler keyH = new KeyHandler(); Sound sound = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
-    Thread gameThread;
-    public Player player = new Player(this, keyH);
+    Thread gameThread; public Player player = new Player(this, keyH);
     public SuperObject obj[] = new SuperObject[100];
     public Entity npc[] = new Entity[10];
 
@@ -93,6 +85,7 @@ public class GamePanel extends JPanel implements Runnable {
                 npc[i].update();
             }
         }
+
 
     }
 

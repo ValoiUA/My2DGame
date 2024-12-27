@@ -1,26 +1,14 @@
 package Inventory;
-
-public class Item {
-    private String name;
-
-    public Item(String name) {
-        this.name = name;
+public class Item {    private String name;
+    private int count;
+    public Item(String name, int count)    {
+        this.name = name;        this.count = count;
     }
-
     public String getName() {
         return name;
-    }
+    }    public int getCount(){
+        return count;    }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Item item = (Item) obj;
-        return name.equals(item.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-}
+    public int hashCode() {        return name.hashCode();
+    }}
