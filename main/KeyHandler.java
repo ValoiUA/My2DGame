@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean upPressed, downPressed, leftPressed, rightPressed, inventoryopen;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, presse, inventoryopen;
 
     public void setInventoryOpen(boolean inventoryOpen) {
         this.inventoryopen = inventoryOpen; }
@@ -32,6 +32,9 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_I){
             inventoryopen = true;
         }
+        if (code == KeyEvent.VK_E){
+            presse = true;
+        }
     }
 
     @Override
@@ -52,6 +55,9 @@ public class KeyHandler implements KeyListener {
         }
         if(code == KeyEvent.VK_I){
             inventoryopen = false;
+        }
+        if (code == KeyEvent.VK_E){
+            presse = false;
         }
     }
 }

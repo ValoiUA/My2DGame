@@ -24,6 +24,8 @@ public class Entity {
      public boolean collisionOn = false;
      public int actionLockCounter = 0;
 
+     public int maxLife;
+     public int life;
 
      public Entity(GamePanel gp) {
           this.gp = gp;
@@ -64,41 +66,41 @@ public class Entity {
           int screenX = worldx - gp.player.worldx + gp.player.screenX;
           int screenY = worldy - gp.player.worldy + gp.player.screenY;
 
-               if (worldx + gp.tileSize > gp.player.worldx - gp.player.screenX &&
+          if (worldx + gp.tileSize > gp.player.worldx - gp.player.screenX &&
                   worldx - gp.tileSize < gp.player.worldx + gp.player.screenX &&
                   worldy + gp.tileSize > gp.player.worldy - gp.player.screenY &&
                   worldy - gp.tileSize < gp.player.worldy + gp.player.screenY) {
 
-                    switch (direction){
-                         case "up":
-                              if(spriteNum == 1){
-                                   image = up1;
-                              }
-                              if(spriteNum == 2){
-                                   image = up2;
-                              } break;
-                         case "down":
-                              if(spriteNum == 1){
-                                   image = down1;
-                              }
-                              if(spriteNum == 2){
-                                   image = down2;
-                              } break;
-                         case "left":
-                              if(spriteNum == 1){
-                                   image = left1;
-                              }
-                              if(spriteNum == 2){
-                                   image = left2;
-                              } break;
-                         case "right":
-                              if(spriteNum == 1){
-                                   image = right1;
-                              }
-                              if(spriteNum == 2){
-                                   image = right2;
-                              } break;
-                    }
+               switch (direction){
+                    case "up":
+                         if(spriteNum == 1){
+                              image = up1;
+                         }
+                         if(spriteNum == 2){
+                              image = up2;
+                         } break;
+                    case "down":
+                         if(spriteNum == 1){
+                              image = down1;
+                         }
+                         if(spriteNum == 2){
+                              image = down2;
+                         } break;
+                    case "left":
+                         if(spriteNum == 1){
+                              image = left1;
+                         }
+                         if(spriteNum == 2){
+                              image = left2;
+                         } break;
+                    case "right":
+                         if(spriteNum == 1){
+                              image = right1;
+                         }
+                         if(spriteNum == 2){
+                              image = right2;
+                         } break;
+               }
                g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
           }
      }
