@@ -22,6 +22,8 @@ public class Entity {
      public Rectangle solidArea = new Rectangle(0, 0, 48,48);
      public int solidAreaDefaultX, solidAreaDefaultY;
      public boolean collisionOn = false;
+     public int actionLockCounter = 0;
+
 
      public Entity(GamePanel gp) {
           this.gp = gp;
@@ -35,6 +37,25 @@ public class Entity {
           collisionOn = false;
           gp.cChecker.checkTile(this);
 
+          if (collisionOn == false){
+               switch (direction){
+                    case "up": worldy -= speed; break;
+                    case "down": worldy += speed; break;
+                    case "right": worldx += speed; break;
+                    case "left": worldx -= speed; break;
+               }
+          }
+
+          spriteCounter++;
+          if (spriteCounter > 12){
+               if(spriteNum == 1){
+                    spriteNum = 2;
+               }
+               else if (spriteNum == 2){
+                    spriteNum = 1;
+               }
+               spriteCounter = 0;
+          }
 
      }
      public void draw(Graphics2D g2){
