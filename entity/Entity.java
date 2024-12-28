@@ -24,8 +24,6 @@ public class Entity {
      public boolean collisionOn = false;
      public int actionLockCounter = 0;
 
-     public int maxLife;
-     public int life;
 
      public Entity(GamePanel gp) {
           this.gp = gp;

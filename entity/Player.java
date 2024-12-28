@@ -5,8 +5,10 @@ import Inventory.Item;
 import main.GamePanel;
 import main.InventoryGUI;
 import main.KeyHandler;
+import main.UtilityTool;
 import maps.AssetSetter;
 import object.Stick;
+import object.Stone;
 import object.SuperObject;
 
 import javax.imageio.ImageIO;
@@ -50,26 +52,31 @@ public class Player extends Entity {
         worldy = gp.tileSize * 21;
         speed = 4;
         direction = "down";
-
-        maxLife = 6;
-        life = maxLife;
     }
 
     public void getPlayerImage() {
+         up1 = setup("boy_up_1");
+        up2 = setup("boy_up_2");
+        down1 = setup("boy_down_1");
+        down2 = setup("boy_down_2");
+        left1 = setup("boy_left_1");
+        left2 = setup("boy_left_2");
+        right1 = setup("boy_right_1");
+        right2 = setup("boy_right_2");
+
+    }
+    public BufferedImage setup(String imageName) {
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
         try {
-            up1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_up_2.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_down_2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_left_2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/images/res/boy_right_2.png"));
-        } catch (IOException e) {
+            image = ImageIO.read(getClass().getResourceAsStream("/images/res/" + imageName + ".png"));
+            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+        }catch(IOException e) {
             e.printStackTrace();
         }
+        return image;
     }
-
     public void update() {
         if (keyH.inventoryopen) {
             keyH.downPressed = false;
@@ -129,6 +136,22 @@ public class Player extends Entity {
                 }
             }
         }
+        showPickupMessage = false;
+        for (SuperObject obj : gp.obj) {
+            if (obj instanceof Stone) {
+                if (Math.abs(obj.worldX - worldx) < tolerance &&
+                        Math.abs(obj.worldY - worldy) < tolerance) {
+                    showPickupMessage = true;
+                    if (keyH.presse) {
+                        invent.addItem(new Item("Stone", 1));
+                        relocateStick(obj);
+                        keyH.presse = false;
+                        showPickupMessage = false;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private void relocateStick(SuperObject stick) {
@@ -170,7 +193,7 @@ public class Player extends Entity {
             case "right":
                 image = (spriteNum == 1) ? right1 : right2; break;
         }
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(image, screenX, screenY,null);
 
         if (showPickupMessage) {
             g2.setColor(Color.WHITE);

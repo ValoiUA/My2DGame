@@ -1,11 +1,12 @@
 package main;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed, presse, inventoryopen;
-
+    public boolean checkDrawTime = false;
     public void setInventoryOpen(boolean inventoryOpen) {
         this.inventoryopen = inventoryOpen; }
     @Override
@@ -35,6 +36,14 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_E){
             presse = true;
         }
+        if (code == KeyEvent.VK_T){
+            if(checkDrawTime == false){
+             checkDrawTime = true;
+            }
+            else if(checkDrawTime == true){
+                checkDrawTime = false;
+            }
+        }
     }
 
     @Override
@@ -59,5 +68,6 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_E){
             presse = false;
         }
+
     }
 }
