@@ -9,11 +9,11 @@ import java.io.IOException;
 // 1 class = 1 OBJ
 public class OBJ_Key extends  SuperObject{
 
-    GamePanel gp;
+
 
     public OBJ_Key(GamePanel gp){
 
-        this.gp = gp;
+
 
         name = "Key";
         try {

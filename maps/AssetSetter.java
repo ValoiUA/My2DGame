@@ -23,17 +23,6 @@ public class AssetSetter {
     }
 
     public void setObject() {
-        gp.obj[0] = new OBJ_Key(gp);
-        gp.obj[0].worldX = 23 * gp.tileSize;
-        gp.obj[0].worldY = 7 * gp.tileSize;
-
-        gp.obj[1] = new OBJ_Key(gp);
-        gp.obj[1].worldX = 23 * gp.tileSize;
-        gp.obj[1].worldY = 40 * gp.tileSize;
-
-        gp.obj[2] = new OBJ_Boots(gp);
-        gp.obj[2].worldX = 37 * gp.tileSize;
-        gp.obj[2].worldY = 42 * gp.tileSize;
 
         int maxObjects = 30;
         int addedObjects = 0;

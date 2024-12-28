@@ -54,6 +54,12 @@ public class Player extends Entity {
         direction = "down";
     }
 
+    public void  pickUpObject(int i) {
+        if(i != 999){
+
+        }
+    }
+
     public void getPlayerImage() {
          up1 = setup("boy_up_1");
         up2 = setup("boy_up_2");

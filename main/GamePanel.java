@@ -13,25 +13,42 @@ import java.awt.*;
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16;
     final int scale = 3;
+
+    // WORLD SETTINGS
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
+
     public final int tileSize = originalTileSize * scale;
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 12;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
+
+    // FPS
     int FPS = 60;
+
     public Invent invent = new Invent();
+
+    // SYSTEM
     InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
     TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
+    KeyHandler keyH = new KeyHandler(this);
     Sound sound = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     Thread gameThread;
+
+    // ENTITY AND OBJECT
     public Player player = new Player(this, keyH);
     public SuperObject obj[] = new SuperObject[100];
     public Entity npc[] = new Entity[10];
+
+    // GAME STATE
+    public final int titleState = 0;
+    public int gameState;
+    public final int playState = 1;
+    public final int pauseState = 2;
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -45,6 +62,7 @@ public class GamePanel extends JPanel implements Runnable {
         aSetter.setObject();
         aSetter.setNPC();
         playMusic(0);
+        gameState = playState;
     }
 
     public void startGameThread() {
@@ -76,6 +94,14 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+
+        if(gameState == playState) {
+            player.update();
+        }
+        if(gameState == pauseState) {
+            // nothing
+        }
+
         player.update();
         for (int i = 0; i < npc.length; i++) {
             if (npc[i] != null) {
@@ -93,6 +119,7 @@ public class GamePanel extends JPanel implements Runnable {
         if(keyH.checkDrawTime == true){
             drawStart = System.nanoTime();
         }
+
 
         tileM.draw(g2);
 
