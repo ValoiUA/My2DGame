@@ -26,6 +26,7 @@ public class Player extends Entity {
     public final int screenY;
     private maps.AssetSetter AssetSetter;
     public boolean showPickupMessage = false;
+    public boolean showTalkMessage = false;
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -54,14 +55,14 @@ public class Player extends Entity {
         direction = "down";
     }
 
-    public void  pickUpObject(int i) {
-        if(i != 999){
-
+    public void pickUpObject(int i) {
+        if (i != 999) {
+            // Код для підбору об'єктів
         }
     }
 
     public void getPlayerImage() {
-         up1 = setup("boy_up_1");
+        up1 = setup("boy_up_1");
         up2 = setup("boy_up_2");
         down1 = setup("boy_down_1");
         down2 = setup("boy_down_2");
@@ -69,8 +70,8 @@ public class Player extends Entity {
         left2 = setup("boy_left_2");
         right1 = setup("boy_right_1");
         right2 = setup("boy_right_2");
-
     }
+
     public BufferedImage setup(String imageName) {
         UtilityTool uTool = new UtilityTool();
         BufferedImage image = null;
@@ -78,133 +79,154 @@ public class Player extends Entity {
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/images/res/" + imageName + ".png"));
             image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
-        }catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return image;
     }
+
     public void update() {
-        if (keyH.inventoryopen) {
-            keyH.downPressed = false;
-            keyH.upPressed = false;
-            keyH.leftPressed = false;
-            keyH.rightPressed = false;
-        }
-        if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
-            if (keyH.upPressed) {
-                direction = "up";
-            } else if (keyH.downPressed) {
-                direction = "down";
-            } else if (keyH.leftPressed) {
-                direction = "left";
-            } else if (keyH.rightPressed) {
-                direction = "right";
+        if (gp.gameState == gp.playState) {
+            if (keyH.inventoryopen) {
+                keyH.downPressed = false;
+                keyH.upPressed = false;
+                keyH.leftPressed = false;
+                keyH.rightPressed = false;
             }
+            if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+                if (keyH.upPressed) {
+                    direction = "up";
+                } else if (keyH.downPressed) {
+                    direction = "down";
+                } else if (keyH.leftPressed) {
+                    direction = "left";
+                } else if (keyH.rightPressed) {
+                    direction = "right";
+                }
 
-            collisionOn = false;
-            gp.cChecker.checkTile(this);
+                collisionOn = false;
+                gp.cChecker.checkTile(this);
 
-            if (!collisionOn) {
-                switch (direction) {
-                    case "up": worldy -= speed; break;
-                    case "down": worldy += speed; break;
-                    case "right": worldx += speed; break;
-                    case "left": worldx -= speed; break;
+                if (!collisionOn) {
+                    switch (direction) {
+                        case "up":
+                            worldy -= speed;
+                            break;
+                        case "down":
+                            worldy += speed;
+                            break;
+                        case "right":
+                            worldx += speed;
+                            break;
+                        case "left":
+                            worldx -= speed;
+                            break;
+                    }
+                }
+
+                spriteCounter++;
+                if (spriteCounter > 12) {
+                    spriteNum = (spriteNum == 1) ? 2 : 1;
+                    spriteCounter = 0;
                 }
             }
-
-            spriteCounter++;
-            if (spriteCounter > 12) {
-                spriteNum = (spriteNum == 1) ? 2 : 1;
-                spriteCounter = 0;
+            if (keyH.inventoryopen) {
+                gp.openInventory();
+                keyH.inventoryopen = false;
             }
-        }
-        if (keyH.inventoryopen) {
-            gp.openInventory();
-            keyH.inventoryopen = false;
-        }
 
-        int tolerance = gp.tileSize * 2; // Допуск для перевірки колізії
+            int tolerance = gp.tileSize * 2; // Допуск для перевірки колізії
 
-        showPickupMessage = false;
-        for (SuperObject obj : gp.obj) {
-            if (obj instanceof Stick) {
-                if (Math.abs(obj.worldX - worldx) < tolerance &&
-                        Math.abs(obj.worldY - worldy) < tolerance) {
-                    showPickupMessage = true;
-                    if (keyH.presse) {
-                        invent.addItem(new Item("Stick", 1));
-                        relocateStick(obj);
-                        keyH.presse = false;
-                        showPickupMessage = false;
-                        break;
+            showPickupMessage = false;
+            showTalkMessage = false;
+
+            for (SuperObject obj : gp.obj) {
+                if (obj instanceof Stick) {
+                    if (Math.abs(obj.worldX - worldx) < tolerance &&
+                            Math.abs(obj.worldY - worldy) < tolerance) {
+                        showPickupMessage = true;
+                        if (keyH.presse) {
+                            invent.addItem(new Item("Stick", 1));
+                            relocateObject(obj);
+                            keyH.presse = false;
+                            showPickupMessage = false;
+                            break;
+                        }
+                    }
+                }
+                if (obj instanceof Stone) {
+                    if (Math.abs(obj.worldX - worldx) < tolerance &&
+                            Math.abs(obj.worldY - worldy) < tolerance) {
+                        showPickupMessage = true;
+                        if (keyH.presse) {
+                            invent.addItem(new Item("Stone", 1));
+                            relocateObject(obj);
+                            keyH.presse = false;
+                            showPickupMessage = false;
+                            break;
+                        }
                     }
                 }
             }
-        }
-        showPickupMessage = false;
-        for (SuperObject obj : gp.obj) {
-            if (obj instanceof Stone) {
-                if (Math.abs(obj.worldX - worldx) < tolerance &&
-                        Math.abs(obj.worldY - worldy) < tolerance) {
-                    showPickupMessage = true;
-                    if (keyH.presse) {
-                        invent.addItem(new Item("Stone", 1));
-                        relocateStick(obj);
-                        keyH.presse = false;
-                        showPickupMessage = false;
-                        break;
+
+            for (Entity entity : gp.npc) {
+                if (entity instanceof NPC_OldMan) {
+                    if (Math.abs(entity.worldx - worldx) < tolerance &&
+                            Math.abs(entity.worldy - worldy) < tolerance) {
+                        showTalkMessage = true;
+                        if (keyH.presse) {
+                            // Ваш код для початку діалогу
+                            keyH.presse = false;
+                            showTalkMessage = false;
+                            break;
+                        }
                     }
                 }
             }
         }
     }
 
-    private void relocateStick(SuperObject stick) {
+    private void relocateObject(SuperObject object) {
         Random random = new Random();
         boolean isCollision;
         int attempts = 0;
 
         do {
             isCollision = false;
-            stick.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
-            stick.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
+            object.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
+            object.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
 
-            gp.cChecker.checkObject(stick);
+            // Перевіряємо колізію з іншими об'єктами
+            for (SuperObject obj : gp.obj) {
+                if (obj != null && obj != object) {
+                    if (object.worldX == obj.worldX && object.worldY == obj.worldY) {
+                        isCollision = true;
+                        break;
+                    }
+                }
+            }
 
-            if (!stick.collision) {
-                stick.collision = false;
+            // Перевіряємо колізію з гравцем
+            if (object.worldX == gp.player.worldx && object.worldY == gp.player.worldy) {
+                isCollision = true;
+            }
+
+            // Перевіряємо колізію з плитками (tiles)
+            gp.cChecker.checkObject(object);
+
+            if (!isCollision && !object.collision) {
+                object.collision = false;
                 break;
             }
 
             attempts++;
             if (attempts > 100) {
-                System.out.println("Unable to relocate stick without collision");
+                System.out.println("Unable to relocate object without collision");
                 break;
             }
 
         } while (isCollision);
     }
 
-    public void draw(Graphics g2) {
-        BufferedImage image = null;
 
-        switch (direction) {
-            case "up":
-                image = (spriteNum == 1) ? up1 : up2; break;
-            case "down":
-                image = (spriteNum == 1) ? down1 : down2; break;
-            case "left":
-                image = (spriteNum == 1) ? left1 : left2; break;
-            case "right":
-                image = (spriteNum == 1) ? right1 : right2; break;
-        }
-        g2.drawImage(image, screenX, screenY,null);
-
-        if (showPickupMessage) {
-            g2.setColor(Color.WHITE);
-            g2.setFont(new Font("Arial", Font.BOLD, 24));
-            g2.drawString("Press E to pick up", screenX - 50, screenY - 20);
-        }
-    }
 }

@@ -16,23 +16,32 @@ public class Sound {
         soundURL[3] = getClass().getResource("/images/sounds/unlock.wav");
         soundURL[4] = getClass().getResource("/images/sounds/fanfare.wav");
     }
-    public void setFile(int i){
+
+    public void setFile(int i) {
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);
             clip = AudioSystem.getClip();
             clip.open(ais);
-        }catch (Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
+    public void play() {
+        if (clip != null) {
+            clip.start();
+        }
     }
-    public void play(){
-        clip.start();
-    }
-    public void loop(){
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
 
+    public void loop() {
+        if (clip != null) {
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
     }
-    public void stop(){
-        clip.stop();
+
+    public void stop() {
+        if (clip != null) {
+            clip.stop();
+        }
     }
 }
