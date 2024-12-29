@@ -1,6 +1,6 @@
 package main;
 
-import javax.swing.*;
+import javax.swing.*;a
 
 public class Main {
     public static void main(String[] args) {

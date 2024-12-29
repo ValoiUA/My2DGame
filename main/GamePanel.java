@@ -43,6 +43,8 @@ public class GamePanel extends JPanel implements Runnable {
     public SuperObject obj[] = new SuperObject[100];
     public Entity npc[] = new Entity[10];
 
+    UI ui = new UI(this);
+
     // GAME STATE
     public final int titleState = 0;
     public int gameState;
@@ -61,8 +63,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         aSetter.setObject();
         aSetter.setNPC();
-        playMusic(0);
         gameState = playState;
+        startMusic();
     }
 
     public void startGameThread() {
@@ -99,7 +101,7 @@ public class GamePanel extends JPanel implements Runnable {
             player.update();
         }
         if(gameState == pauseState) {
-            // nothing
+
         }
 
         player.update();
@@ -108,7 +110,6 @@ public class GamePanel extends JPanel implements Runnable {
                 npc[i].update();
             }
         }
-        System.out.println(npc);
     }
 
     public void paintComponent(Graphics g) {
@@ -133,6 +134,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (npc[i] != null) {
                 npc[i].draw(g2);
             }
+            ui.draw(g2);
         }
 
         player.draw(g2);
@@ -152,6 +154,12 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("Press E to pick up", player.screenX - 50, player.screenY - 20);
         }
 
+        if(player.showTalkMessage){
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("Arial", Font.BOLD, 24));
+            g2.drawString("Press E to talk", player.screenX - 50, player.screenY - 50);
+        }
+
         g2.dispose();
     }
 
@@ -165,18 +173,10 @@ public class GamePanel extends JPanel implements Runnable {
         keyH.setInventoryOpen(false);
     }
 
-    public void playMusic(int i) {
-        sound.setFile(i);
+    public void startMusic() {
+        sound.setFile(0);
         sound.play();
         sound.loop();
     }
 
-    public void stopMusic() {
-        sound.stop();
-    }
-
-    public void playSE(int i) {
-        sound.setFile(i);
-        sound.play();
-    }
 }
