@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Entity {
+     // com
      GamePanel gp;
 
      public  int worldx, worldy;
