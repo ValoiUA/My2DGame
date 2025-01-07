@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Entity {
+     // com
      GamePanel gp;
 
      public  int worldx, worldy;
