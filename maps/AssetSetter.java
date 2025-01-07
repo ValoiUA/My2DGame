@@ -1,5 +1,6 @@
 package maps;
 
+import Monster.MON_GreenSlime;
 import entity.NPC_OldMan;
 import main.GamePanel;
 import object.OBJ_Boots;
@@ -109,5 +110,17 @@ public class AssetSetter {
         gp.npc[0] = new NPC_OldMan(gp);
         gp.npc[0].worldx = gp.tileSize * 21;
         gp.npc[0].worldy = gp.tileSize * 21;
+    }
+
+    public void SetMonster(){
+        gp.monster[0] = new MON_GreenSlime(gp);
+        gp.monster[0].worldx = gp.tileSize*23;
+        gp.monster[0].worldy = gp.tileSize*23;
+
+        gp.monster[1] = new MON_GreenSlime(gp);
+        gp.monster[1].worldx = gp.tileSize*26;
+        gp.monster[1].worldy = gp.tileSize*26;
+
+
     }
 }

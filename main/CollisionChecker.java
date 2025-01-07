@@ -6,6 +6,7 @@ import object.SuperObject;
 public class CollisionChecker {
 
     GamePanel gp;
+    Entity entity = new Entity(gp);
 
     public CollisionChecker(GamePanel gp) {
         this.gp = gp;
@@ -57,6 +58,7 @@ public class CollisionChecker {
                     entity.collisionOn = true;
                 }
                 break;
+
         }
     }
 

@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 public class Entity {
      GamePanel gp;
@@ -23,6 +24,12 @@ public class Entity {
      public int solidAreaDefaultX, solidAreaDefaultY;
      public boolean collisionOn = false;
      public int actionLockCounter = 0;
+
+     //здоровье энтити
+     public int maxLife;
+     public int Life;
+     public String name;
+
 
 
      public Entity(GamePanel gp) {
@@ -113,5 +120,31 @@ public class Entity {
                e.printStackTrace();
           }
           return image;
+
+     }
+     public void getMonImage() {
+          up1 = setup("/images/monster/orc_up_1");
+          up2 = setup("/images/monster/orc_up_1");
+          down1 = setup("/images/monster/orc_up_1");
+          down2 = setup("/images/monster/orc_up_1");
+          left1 = setup("/images/monster/orc_up_1");
+          left2 = setup("/images/monster/orc_up_1");
+          right1 = setup("/images/monster/orc_up_1");
+          right2 = setup("/images/monster/orc_up_1");
+     }
+     public void setMoAction() {
+          actionLockCounter++;
+
+          if (actionLockCounter == 120) {
+               Random random = new Random();
+               int i = random.nextInt(100) + 1; // pick up a number from 1 to 100
+
+               if (i <= 25) direction = "up";
+               if (i <= 50) direction = "down";
+               if (i <= 75) direction = "left";
+               if (i <= 100) direction = "right";
+
+               actionLockCounter = 0;
+          }
      }
 }

@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class SuperObject {
-    public BufferedImage image;
+    public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
     public int worldX, worldY;

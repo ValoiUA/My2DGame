@@ -28,6 +28,7 @@ public class Player extends Entity {
     public boolean showPickupMessage = false;
     public boolean showTalkMessage = false;
 
+
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
         this.keyH = keyH;
@@ -46,6 +47,7 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
+
     }
 
     public void setDefaultValues() {
@@ -53,6 +55,11 @@ public class Player extends Entity {
         worldy = gp.tileSize * 21;
         speed = 4;
         direction = "down";
+
+        //хп челика
+        maxLife = 10;
+        Life = maxLife;
+
     }
 
     public void pickUpObject(int i) {
@@ -86,6 +93,8 @@ public class Player extends Entity {
     }
 
     public void update() {
+
+
         if (gp.gameState == gp.playState) {
             if (keyH.inventoryopen) {
                 keyH.downPressed = false;
@@ -140,6 +149,9 @@ public class Player extends Entity {
             showPickupMessage = false;
             showTalkMessage = false;
 
+
+
+
             for (SuperObject obj : gp.obj) {
                 if (obj instanceof Stick) {
                     if (Math.abs(obj.worldX - worldx) < tolerance &&
@@ -183,6 +195,7 @@ public class Player extends Entity {
                     }
                 }
             }
+            gp.eHandler.checkEvent();
         }
     }
 
