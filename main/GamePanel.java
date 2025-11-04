@@ -9,6 +9,7 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16;
@@ -52,6 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start();
     }
 
+
     @Override
     public void run() {
         double drawInterval = 1000000000 / FPS;
@@ -59,7 +61,6 @@ public class GamePanel extends JPanel implements Runnable {
         while (gameThread != null) {
             update();
             repaint();
-            System.out.println(FPS);
             try {
                 double remainingTime = nextDrawTime - System.nanoTime();
                 remainingTime = remainingTime / 1000000;
