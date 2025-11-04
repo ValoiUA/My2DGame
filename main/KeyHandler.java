@@ -1,40 +1,54 @@
 package main;
 
-import entity.Player;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed, presse, inventoryopen;
+    private boolean escapePressed = false;
+    private GamePanel gamePanel;
+
+    public KeyHandler(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
+
     public void setInventoryOpen(boolean inventoryOpen) {
-        this.inventoryopen = inventoryOpen; }
+        this.inventoryopen = inventoryOpen;
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
 
-        if(code == KeyEvent.VK_W){
+        if (code == KeyEvent.VK_W) {
             upPressed = true;
         }
-        if(code == KeyEvent.VK_S){
+        if (code == KeyEvent.VK_S) {
             downPressed = true;
         }
-        if(code == KeyEvent.VK_A){
+        if (code == KeyEvent.VK_A) {
             leftPressed = true;
         }
-        if(code == KeyEvent.VK_D){
+        if (code == KeyEvent.VK_D) {
             rightPressed = true;
         }
-        if(code == KeyEvent.VK_I){
+        if (code == KeyEvent.VK_I) {
             inventoryopen = true;
         }
-        if (code == KeyEvent.VK_E){
+        if (code == KeyEvent.VK_E) {
             presse = true;
+        }
+        if (code == KeyEvent.VK_ESCAPE) {
+            if (!escapePressed) {
+                escapePressed = true;
+                if (!inventoryopen) {
+                    gamePanel.togglePause(); // Викликаємо паузу
+                }
+            }
         }
     }
 
@@ -42,23 +56,26 @@ public class KeyHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
 
-        if(code == KeyEvent.VK_W){
+        if (code == KeyEvent.VK_W) {
             upPressed = false;
         }
-        if(code == KeyEvent.VK_S){
+        if (code == KeyEvent.VK_S) {
             downPressed = false;
         }
-        if(code == KeyEvent.VK_A){
+        if (code == KeyEvent.VK_A) {
             leftPressed = false;
         }
-        if(code == KeyEvent.VK_D){
+        if (code == KeyEvent.VK_D) {
             rightPressed = false;
         }
-        if(code == KeyEvent.VK_I){
+        if (code == KeyEvent.VK_I) {
             inventoryopen = false;
         }
-        if (code == KeyEvent.VK_E){
+        if (code == KeyEvent.VK_E) {
             presse = false;
+        }
+        if (code == KeyEvent.VK_ESCAPE) {
+            escapePressed = false;
         }
     }
 }

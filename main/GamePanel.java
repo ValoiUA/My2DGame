@@ -9,7 +9,6 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16;
@@ -25,7 +24,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Invent invent = new Invent();
     InventoryGUI inventoryGUI = new InventoryGUI(this, invent);
     TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
+    KeyHandler keyH = new KeyHandler(this);
     Sound sound = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
@@ -34,12 +33,18 @@ public class GamePanel extends JPanel implements Runnable {
     public SuperObject obj[] = new SuperObject[100];
     public Entity npc[] = new Entity[10];
 
+    private boolean gamePaused = false;
+    private PauseMenu pauseMenu;
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        // Створюємо меню паузи
+        pauseMenu = new PauseMenu(this);
     }
 
     public void setupGame() {
@@ -48,11 +53,11 @@ public class GamePanel extends JPanel implements Runnable {
         playMusic(0);
     }
 
+
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
-
 
     @Override
     public void run() {
@@ -78,19 +83,63 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        player.update();
-        for (int i = 0; i < npc.length; i++) {
-            if (npc[i] != null) {
-                npc[i].update();
+        if (!gamePaused) {
+            player.update();
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) {
+                    npc[i].update();
+                }
             }
         }
     }
 
+
+
+    public void togglePause() {
+        gamePaused = !gamePaused;
+        if (gamePaused) {
+            stopMusic();
+            pauseMenu.showPauseMenu(); // Показуємо діалог
+        } else {
+            playMusic(0);
+        }
+        repaint();
+    }
+
+    public void returnToMainMenu() {
+        gamePaused = false;
+        stopMusic();
+        if (gameThread != null) {
+            gameThread = null;
+        }
+
+        JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        currentFrame.dispose();
+
+        SwingUtilities.invokeLater(() -> {
+            JFrame menuFrame = new JFrame();
+            menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            menuFrame.setResizable(false);
+            menuFrame.setTitle("Головне меню");
+
+            MainMenu mainMenu = new MainMenu(menuFrame);
+            menuFrame.add(mainMenu);
+
+            menuFrame.pack();
+            menuFrame.setLocationRelativeTo(null);
+            menuFrame.setVisible(true);
+        });
+    }
+
+    public boolean isGamePaused() {
+        return gamePaused;
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
 
+        // Завжди малюємо гру
         tileM.draw(g2);
 
         for (int i = 0; i < obj.length; i++) {
@@ -107,7 +156,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         player.draw(g2);
 
-        // Відображення повідомлення "Press E to pick up"
         if (player.showPickupMessage) {
             g2.setColor(Color.WHITE);
             g2.setFont(new Font("Arial", Font.BOLD, 24));
