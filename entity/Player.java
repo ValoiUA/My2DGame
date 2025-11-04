@@ -23,6 +23,7 @@ public class Player extends Entity {
     InventoryGUI inventoryGUI;
     public final int screenX;
     public final int screenY;
+    public Item heldItem;
     private maps.AssetSetter AssetSetter;
     public boolean showPickupMessage = false;
     private String pickupName = ""; // <-- для відображення назви предмета
@@ -153,68 +154,31 @@ public class Player extends Entity {
     // Метод для переміщення будь-якого предмета в нове місце
     private void relocateObject(SuperObject obj) {
         Random random = new Random();
-        boolean isCollision;
         int attempts = 0;
 
-        do {
-            isCollision = false;
-            obj.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
-            obj.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
+        while (attempts < 100){
+            int newX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
+            int newY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
 
-            gp.cChecker.checkObject(obj);
+            boolean canPlace = gp.cChecker.canSpawnObject(newX, newY);
 
-            if (!obj.collision) {
+            if (canPlace){
+                obj.worldX = newX;
+                obj.worldY = newY;
                 obj.collision = false;
-                break;
+                return;
             }
-
             attempts++;
-            if (attempts > 100) {
-                System.out.println("Unable to relocate object without collision");
-                break;
-            }
-
-        } while (isCollision);
+        }
+        System.out.println("Unable");
+    }
+    public void holdItem(Item item) {
+        this.heldItem = item;
+        System.out.println("Now holding: " + item.getName());
     }
 
-    public void draw(Graphics g2) {
-        BufferedImage image = null;
-
-        switch (direction) {
-            case "up":
-                image = (spriteNum == 1) ? up1 : up2; break;
-            case "down":
-                image = (spriteNum == 1) ? down1 : down2; break;
-            case "left":
-                image = (spriteNum == 1) ? left1 : left2; break;
-            case "right":
-                image = (spriteNum == 1) ? right1 : right2; break;
-        }
-
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-
-        if (showPickupMessage) {
-            Graphics2D g2d = (Graphics2D) g2;
-
-            String text = "Press E to pick up " + pickupName;
-            g2d.setFont(new Font("Arial", Font.BOLD, 24));
-
-            FontMetrics fm = g2d.getFontMetrics();
-            int textWidth = fm.stringWidth(text);
-            int textHeight = fm.getHeight();
-
-            // позиція в центрі над гравцем
-            int x = screenX + (gp.tileSize / 2) - (textWidth / 2);
-            int y = screenY - 30;
-
-            // напівпрозорий фон під текстом
-            g2d.setColor(new Color(0, 0, 0, 150)); // чорний з прозорістю
-            g2d.fillRoundRect(x - 10, y - textHeight + 5, textWidth + 20, textHeight + 10, 15, 15);
-
-            // білий текст поверх
-            g2d.setColor(Color.WHITE);
-            g2d.drawString(text, x, y);
-        }
+    public void clearHeldItem() {
+        this.heldItem = null;
+    }
 
     }
-}

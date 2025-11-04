@@ -42,66 +42,54 @@ public class AssetSetter {
         while (addedSticks < maxSticks) {
             boolean isCollision;
             int attempts = 0;
-            SuperObject stick;
+            while (attempts < 100) {
+                int wxPos = random.nextInt(gp.maxWorldCol) * gp.tileSize;
+                int wyPos = random.nextInt(gp.maxWorldRow) * gp.tileSize;
 
-            do {
-                isCollision = false;
-                stick = new Stick();
-                stick.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
-                stick.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
+                if (gp.cChecker.canSpawnObject(wxPos, wyPos)) {
+                    Stick stick = new Stick();
+                    stick.worldX = wxPos;
+                    stick.worldY = wyPos;
 
-                gp.cChecker.checkObject(stick);
-                if (stick.collision) isCollision = true;
-
-                attempts++;
-                if (attempts > 100) {
-                    System.out.println("Unable to place stick without collision");
+                    gp.obj[3 + addedSticks] = stick;
+                    wx.add(wxPos);
+                    wy.add(wyPos);
+                    addedSticks++;
                     break;
                 }
-
-            } while (isCollision);
-
-            if (!isCollision) {
-                gp.obj[3 + addedSticks] = stick;
-                wx.add(stick.worldX);
-                wy.add(stick.worldY);
-                addedSticks++;
+                attempts++;
+            }
+            if (attempts >= 100) {
+                System.out.println("No free space");
+                break;
             }
         }
-
-        // --- Генерація каменів ---
         int addedStones = 0;
         while (addedStones < maxStones) {
-            boolean isCollision;
-            int attempts = 0;
-            SuperObject stone;
+            int att = 0;
+            while (att < 100) {
+                int wxPoss = random.nextInt(gp.maxWorldCol) * gp.tileSize;
+                int wyPoss = random.nextInt(gp.maxWorldRow) * gp.tileSize;
 
-            do {
-                isCollision = false;
-                stone = new Stone();
-                stone.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
-                stone.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
+                if (gp.cChecker.canSpawnObject(wxPoss, wyPoss)) {
+                    Stone stone = new Stone();
+                    stone.worldX = wxPoss;
+                    stone.worldY = wyPoss;
 
-                gp.cChecker.checkObject(stone);
-                if (stone.collision) isCollision = true;
-
-                attempts++;
-                if (attempts > 100) {
-                    System.out.println("Unable to place stone without collision");
+                    gp.obj[3 + maxSticks + addedStones] = stone;
+                    wxstone.add(wxPoss);
+                    wystone.add(wyPoss);
+                    addedStones++;
                     break;
                 }
-
-            } while (isCollision);
-
-            if (!isCollision) {
-                gp.obj[3 + maxSticks + addedStones] = stone;
-                wxstone.add(stone.worldX);
-                wystone.add(stone.worldY);
-                addedStones++;
+                att++;
+            }
+            if (att >= 100) {
+                System.out.println("No free space");
+                break;
             }
         }
     }
-
     public static ArrayList<Integer> getWorldx() { return wx; }
     public static ArrayList<Integer> getWorldy() { return wy; }
 

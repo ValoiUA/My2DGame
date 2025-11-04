@@ -84,10 +84,33 @@ public class InventoryGUI extends JFrame {
                 craftItem(recipeList.getSelectedValue());
             }
         });
+        JButton takeItemButton = new JButton("Take Item");
+        styleButton(takeItemButton);
+        takeItemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedItemName = inventoryList.getSelectedValue();
+                if (selectedItemName == null) {
+                    JOptionPane.showMessageDialog(null, "Select an item to take!");
+                    return;
+                }
+
+                // Знаходимо предмет у списку інвентаря
+                for (Item item : inventory.getItems()) {
+                    if (selectedItemName.contains(item.getName())) {
+                        gamePanel.player.holdItem(item);
+                        JOptionPane.showMessageDialog(null, "You took " + item.getName() + " in hand!");
+                        break;
+                    }
+                }
+            }
+        });
+
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addItemButton);
         buttonPanel.add(craftItemButton);
+        buttonPanel.add(takeItemButton);
 
         // Розташування панелей з однаковою шириною
         JPanel inventoryPanel = new JPanel(new BorderLayout());
@@ -161,7 +184,6 @@ public class InventoryGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Please select a recipe to craft.");
         }
     }
-
     private void addRecipes() {
         // Додавання рецепту крафту для створення верстака з двох палок
         List<Item> recipeWorkbench = new ArrayList<>();

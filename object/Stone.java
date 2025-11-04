@@ -7,7 +7,7 @@ public class Stone extends SuperObject {
     public Stone() {
         name = "Stone";
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("/images/objimg/Stone.jpg"));
+            image = ImageIO.read(getClass().getResourceAsStream("/images/objimg/Stone.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
