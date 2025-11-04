@@ -7,6 +7,7 @@ import main.InventoryGUI;
 import main.KeyHandler;
 import maps.AssetSetter;
 import object.Stick;
+import object.Stone;
 import object.SuperObject;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,7 @@ public class Player extends Entity {
     public final int screenY;
     private maps.AssetSetter AssetSetter;
     public boolean showPickupMessage = false;
+    private String pickupName = ""; // <-- для відображення назви предмета
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -108,17 +110,37 @@ public class Player extends Entity {
             keyH.inventoryopen = false;
         }
 
-        int tolerance = gp.tileSize * 2; // Допуск для перевірки колізії
+        int tolerance = gp.tileSize * 2; // радіус підбору
 
         showPickupMessage = false;
+        pickupName = "";
+
         for (SuperObject obj : gp.obj) {
-            if (obj instanceof Stick) {
-                if (Math.abs(obj.worldX - worldx) < tolerance &&
-                        Math.abs(obj.worldY - worldy) < tolerance) {
+            if (obj == null) continue;
+
+            if (Math.abs(obj.worldX - worldx) < tolerance &&
+                    Math.abs(obj.worldY - worldy) < tolerance) {
+
+                // --- Підбір палки ---
+                if (obj instanceof Stick) {
                     showPickupMessage = true;
+                    pickupName = "Stick";
                     if (keyH.presse) {
                         invent.addItem(new Item("Stick", 1));
-                        relocateStick(obj);
+                        relocateObject(obj);
+                        keyH.presse = false;
+                        showPickupMessage = false;
+                        break;
+                    }
+                }
+
+                // --- Підбір каменя ---
+                else if (obj instanceof Stone) {
+                    showPickupMessage = true;
+                    pickupName = "Stone";
+                    if (keyH.presse) {
+                        invent.addItem(new Item("Stone", 1));
+                        relocateObject(obj);
                         keyH.presse = false;
                         showPickupMessage = false;
                         break;
@@ -128,26 +150,27 @@ public class Player extends Entity {
         }
     }
 
-    private void relocateStick(SuperObject stick) {
+    // Метод для переміщення будь-якого предмета в нове місце
+    private void relocateObject(SuperObject obj) {
         Random random = new Random();
         boolean isCollision;
         int attempts = 0;
 
         do {
             isCollision = false;
-            stick.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
-            stick.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
+            obj.worldX = random.nextInt(gp.maxWorldCol) * gp.tileSize;
+            obj.worldY = random.nextInt(gp.maxWorldRow) * gp.tileSize;
 
-            gp.cChecker.checkObject(stick);
+            gp.cChecker.checkObject(obj);
 
-            if (!stick.collision) {
-                stick.collision = false;
+            if (!obj.collision) {
+                obj.collision = false;
                 break;
             }
 
             attempts++;
             if (attempts > 100) {
-                System.out.println("Unable to relocate stick without collision");
+                System.out.println("Unable to relocate object without collision");
                 break;
             }
 
@@ -167,12 +190,31 @@ public class Player extends Entity {
             case "right":
                 image = (spriteNum == 1) ? right1 : right2; break;
         }
+
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
 
         if (showPickupMessage) {
-            g2.setColor(Color.WHITE);
-            g2.setFont(new Font("Arial", Font.BOLD, 24));
-            g2.drawString("Press E to pick up", screenX - 50, screenY - 20);
+            Graphics2D g2d = (Graphics2D) g2;
+
+            String text = "Press E to pick up " + pickupName;
+            g2d.setFont(new Font("Arial", Font.BOLD, 24));
+
+            FontMetrics fm = g2d.getFontMetrics();
+            int textWidth = fm.stringWidth(text);
+            int textHeight = fm.getHeight();
+
+            // позиція в центрі над гравцем
+            int x = screenX + (gp.tileSize / 2) - (textWidth / 2);
+            int y = screenY - 30;
+
+            // напівпрозорий фон під текстом
+            g2d.setColor(new Color(0, 0, 0, 150)); // чорний з прозорістю
+            g2d.fillRoundRect(x - 10, y - textHeight + 5, textWidth + 20, textHeight + 10, 15, 15);
+
+            // білий текст поверх
+            g2d.setColor(Color.WHITE);
+            g2d.drawString(text, x, y);
         }
+
     }
 }
