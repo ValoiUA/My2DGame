@@ -19,6 +19,8 @@ public class InventoryGUI extends JFrame {
     private JTextArea recipeDetails;
     private DefaultListModel<String> recipeListModel;
     private Timer messageTimer;
+    private JDialog currentMessageDialog;
+    private Timer fadeOutTimer; // Окремий таймер для анімації зникнення
 
     private final int GRID_SIZE = 8;
 
@@ -29,13 +31,12 @@ public class InventoryGUI extends JFrame {
 
         // Прозорий, безрамковий інвентар
         setUndecorated(true);
-        setBackground(new Color(0, 0, 0, 0)); // прозорий фон
+        setBackground(new Color(0, 0, 0, 0));
         setSize(1000, 700);
         setLayout(new BorderLayout(15, 10));
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // закриття лише кнопкою
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        // Обов'язково повідомляємо гру при закритті
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -49,7 +50,7 @@ public class InventoryGUI extends JFrame {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
-                g2d.setColor(new Color(30, 33, 40, 180)); // напівпрозорий
+                g2d.setColor(new Color(30, 33, 40, 180));
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
         };
@@ -59,18 +60,18 @@ public class InventoryGUI extends JFrame {
         // Панель рецептів
         recipeListModel = new DefaultListModel<>();
         JList<String> recipeList = new JList<>(recipeListModel);
-        recipeList.setBackground(new Color(50, 54, 63, 180)); // прозорий
+        recipeList.setBackground(new Color(50, 54, 63, 180));
         recipeList.setForeground(Color.WHITE);
         recipeList.setFont(new Font("Verdana", Font.BOLD, 14));
 
         recipeDetails = new JTextArea();
         recipeDetails.setEditable(false);
-        recipeDetails.setBackground(new Color(50, 54, 63, 180)); // прозорий
+        recipeDetails.setBackground(new Color(50, 54, 63, 180));
         recipeDetails.setForeground(Color.WHITE);
         recipeDetails.setFont(new Font("Verdana", Font.PLAIN, 14));
         recipeDetails.setLineWrap(true);
         recipeDetails.setWrapStyleWord(true);
-        recipeDetails.setMargin(new Insets(10, 10, 10, 10)); // відступи всередині текстової області
+        recipeDetails.setMargin(new Insets(10, 10, 10, 10));
 
         recipeList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -83,7 +84,6 @@ public class InventoryGUI extends JFrame {
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setOpaque(false);
 
-        // Панель списку рецептів - 65% висоти
         JScrollPane recipeListScroll = new JScrollPane(recipeList);
         recipeListScroll.setPreferredSize(new Dimension(250, (int)(600 * 0.65)));
         recipeListScroll.setMaximumSize(new Dimension(250, (int)(600 * 0.65)));
@@ -97,7 +97,6 @@ public class InventoryGUI extends JFrame {
                 Color.WHITE
         ));
 
-        // Панель деталей рецепту - 35% висоти
         JScrollPane detailsScroll = new JScrollPane(recipeDetails);
         detailsScroll.setPreferredSize(new Dimension(250, (int)(600 * 0.35)));
         detailsScroll.setMaximumSize(new Dimension(250, (int)(600 * 0.35)));
@@ -111,7 +110,6 @@ public class InventoryGUI extends JFrame {
                 Color.WHITE
         ));
 
-        // Додаємо компоненти з правильними пропорціями
         rightPanel.add(recipeListScroll);
         rightPanel.add(Box.createVerticalStrut(10));
         rightPanel.add(detailsScroll);
@@ -124,6 +122,7 @@ public class InventoryGUI extends JFrame {
         });
 
         JButton closeButton = makeButton("Close", e -> {
+            closeAllMessages();
             setVisible(false);
             gamePanel.closeInventory();
         });
@@ -163,7 +162,7 @@ public class InventoryGUI extends JFrame {
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
                     Graphics2D g2d = (Graphics2D) g;
-                    g2d.setColor(new Color(60, 63, 70, 180)); // прозорий
+                    g2d.setColor(new Color(60, 63, 70, 180));
                     g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                 }
             };
@@ -191,7 +190,6 @@ public class InventoryGUI extends JFrame {
                 cell.add(iconLabel, BorderLayout.CENTER);
                 cell.add(countLabel, BorderLayout.SOUTH);
 
-                // Взяття предмета
                 cell.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -261,7 +259,6 @@ public class InventoryGUI extends JFrame {
     }
 
     private void displayRecipeDetails(String recipeName) {
-        // Очищуємо текст перед додаванням нового
         recipeDetails.setText("");
 
         if (recipeName == null) {
@@ -275,9 +272,7 @@ public class InventoryGUI extends JFrame {
                 for (Item item : recipe.getRequiredItems()) {
                     details.append("• ").append(item.getName()).append(" x").append(item.getCount()).append("\n");
                 }
-                // Встановлюємо текст одразу, без додавання
                 recipeDetails.setText(details.toString());
-                // Переміщуємо курсор на початок
                 recipeDetails.setCaretPosition(0);
                 return;
             }
@@ -286,45 +281,22 @@ public class InventoryGUI extends JFrame {
     }
 
     private void showItemTakenMessage(Item item) {
-        // Зупиняємо попередній таймер, якщо він активний
-        if (messageTimer != null && messageTimer.isRunning()) {
-            messageTimer.stop();
-        }
-
-        JDialog messageDialog = createMessageDialog("✓ You took " + item.getName() + " in hand!", true);
-        messageDialog.setVisible(true);
-
-        messageTimer = new Timer(1500, e -> {
-            messageDialog.dispose();
-            messageTimer.stop();
-        });
-        messageTimer.setRepeats(false);
-        messageTimer.start();
+        showMessage("✓ You took " + item.getName() + " in hand!", true, 1500);
     }
 
     private void showCraftingMessage(String message, boolean success) {
-        // Зупиняємо попередній таймер, якщо він активний
-        if (messageTimer != null && messageTimer.isRunning()) {
-            messageTimer.stop();
-        }
-
-        Color bgColor = success ? new Color(30, 120, 60, 200) : new Color(120, 30, 60, 200);
-        JDialog messageDialog = createMessageDialog(message, success);
-        messageDialog.setVisible(true);
-
-        messageTimer = new Timer(2000, e -> {
-            messageDialog.dispose();
-            messageTimer.stop();
-        });
-        messageTimer.setRepeats(false);
-        messageTimer.start();
+        showMessage(message, success, 2000);
     }
 
-    private JDialog createMessageDialog(String message, boolean success) {
-        JDialog messageDialog = new JDialog(this, "", false);
-        messageDialog.setUndecorated(true);
-        messageDialog.setSize(350, 80);
-        messageDialog.setLocationRelativeTo(this);
+    private void showMessage(String message, boolean success, int duration) {
+        // Закриваємо попереднє сповіщення
+        closeAllMessages();
+
+        // Створюємо нове сповіщення
+        currentMessageDialog = new JDialog(this, "", false);
+        currentMessageDialog.setUndecorated(true);
+        currentMessageDialog.setSize(350, 80);
+        currentMessageDialog.setLocationRelativeTo(this);
 
         JPanel panel = new JPanel(new BorderLayout()) {
             @Override
@@ -345,24 +317,102 @@ public class InventoryGUI extends JFrame {
         label.setFont(new Font("Verdana", Font.BOLD, 14));
         panel.add(label, BorderLayout.CENTER);
 
-        messageDialog.add(panel);
-        messageDialog.setOpacity(0f);
+        currentMessageDialog.add(panel);
+        currentMessageDialog.setOpacity(0f);
 
         // Анімація появи
         Timer fadeInTimer = new Timer(20, new ActionListener() {
             float opacity = 0f;
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Перевіряємо, чи сповіщення ще існує
+                if (currentMessageDialog == null) {
+                    ((Timer)e.getSource()).stop();
+                    return;
+                }
+
                 opacity += 0.1f;
                 if (opacity >= 1f) {
                     opacity = 1f;
                     ((Timer)e.getSource()).stop();
                 }
-                messageDialog.setOpacity(opacity);
+                currentMessageDialog.setOpacity(opacity);
             }
         });
         fadeInTimer.start();
 
-        return messageDialog;
+        currentMessageDialog.setVisible(true);
+
+        // Таймер для автоматичного закриття
+        if (messageTimer != null && messageTimer.isRunning()) {
+            messageTimer.stop();
+        }
+
+        messageTimer = new Timer(duration, e -> {
+            closeCurrentMessageWithAnimation();
+        });
+        messageTimer.setRepeats(false);
+        messageTimer.start();
+    }
+
+    private void closeAllMessages() {
+        // Зупиняємо всі таймери
+        if (messageTimer != null && messageTimer.isRunning()) {
+            messageTimer.stop();
+        }
+        if (fadeOutTimer != null && fadeOutTimer.isRunning()) {
+            fadeOutTimer.stop();
+        }
+
+        // Закриваємо сповіщення без анімації
+        if (currentMessageDialog != null) {
+            currentMessageDialog.dispose();
+            currentMessageDialog = null;
+        }
+    }
+
+    private void closeCurrentMessageWithAnimation() {
+        if (currentMessageDialog == null) {
+            return;
+        }
+
+        // Зупиняємо основний таймер
+        if (messageTimer != null && messageTimer.isRunning()) {
+            messageTimer.stop();
+        }
+
+        // Анімація зникнення
+        if (fadeOutTimer != null && fadeOutTimer.isRunning()) {
+            fadeOutTimer.stop();
+        }
+
+        fadeOutTimer = new Timer(20, new ActionListener() {
+            float opacity = 1f;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Перевіряємо, чи сповіщення ще існує
+                if (currentMessageDialog == null) {
+                    ((Timer)e.getSource()).stop();
+                    return;
+                }
+
+                opacity -= 0.1f;
+                if (opacity <= 0f) {
+                    opacity = 0f;
+                    ((Timer)e.getSource()).stop();
+                    // Останній крок - закриваємо сповіщення
+                    if (currentMessageDialog != null) {
+                        currentMessageDialog.dispose();
+                        currentMessageDialog = null;
+                    }
+                } else {
+                    // Безпечно встановлюємо прозорість
+                    if (currentMessageDialog != null) {
+                        currentMessageDialog.setOpacity(opacity);
+                    }
+                }
+            }
+        });
+        fadeOutTimer.start();
     }
 }
